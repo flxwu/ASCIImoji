@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ListView, Text } from 'react-native'
+import { View, ListView, Text, TouchableOpacity, Clipboard, TextInput, Alert } from 'react-native'
 import { connect } from 'react-redux'
 
 // For empty lists
@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 
 // Styles
 import styles from './Styles/EmojisListScreenStyle'
+import { Colors } from '../Themes/index';
 
 class EmojisListScreen extends Component {
   constructor (props) {
@@ -17,33 +18,8 @@ class EmojisListScreen extends Component {
     * This is an array of objects with the properties you desire
     * Usually this should come from Redux mapStateToProps
     *************************************************************/
-    const dataObjects = {
-      first: [
-        {title: 'First Title', description: 'First Description'},
-        {title: 'Second Title', description: 'Second Description'},
-        {title: 'Third Title', description: 'Third Description'},
-        {title: 'Fourth Title', description: 'Fourth Description'},
-        {title: 'Fifth Title', description: 'Fifth Description'},
-        {title: 'Sixth Title', description: 'Sixth Description'},
-        {title: 'Seventh Title', description: 'Seventh Description'},
-        {title: 'Eighth Title', description: 'Eighth Description'},
-        {title: 'Ninth Title', description: 'Ninth Description'},
-        {title: 'Tenth Title', description: 'Tenth Description'}
-      ],
-      second: [
-        {title: 'Eleventh Title', description: 'Eleventh Description'},
-        {title: '12th Title', description: '12th Description'},
-        {title: '13th Title', description: '13th Description'},
-        {title: '14th Title', description: '14th Description'},
-        {title: '15th Title', description: '15th Description'},
-        {title: '16th Title', description: '16th Description'},
-        {title: '17th Title', description: '17th Description'},
-        {title: '18th Title', description: '18th Description'},
-        {title: '19th Title', description: '19th Description'},
-        {title: '20th Title', description: '20th Description'},
-        {title: 'BLACKJACK!', description: 'BLACKJACK! Description'}
-      ]
-    }
+    const dataObjects = require('../Fixtures/content.json') 
+    
     /* ***********************************************************
     * STEP 2
     * Teach datasource how to detect if rows are different
@@ -56,10 +32,13 @@ class EmojisListScreen extends Component {
 
     // DataSource configured
     const ds = new ListView.DataSource({rowHasChanged, sectionHeaderHasChanged})
+    this.selected = this.selected.bind(this);
+    this.renderRow = this.renderRow.bind(this);
 
     // Datasource is always in state
     this.state = {
-      dataSource: ds.cloneWithRowsAndSections(dataObjects)
+      dataSource: ds.cloneWithRowsAndSections(dataObjects),
+      selectedEmoji: 'Copy a Emoji by clicking on it!'
     }
   }
 
@@ -75,11 +54,16 @@ class EmojisListScreen extends Component {
     // You can condition on sectionID (key as string), for different cells
     // in different sections
     return (
-      <View style={styles.row}>
-        <Text style={styles.boldLabel}>Section {sectionID} - {rowData.title}</Text>
-        <Text style={styles.label}>{rowData.description}</Text>
-      </View>
+      <TouchableOpacity style={styles.row} onPress={() => this.selected(rowData.art)}>
+        <Text style={styles.boldLabel}>{rowData.name}</Text>
+        <Text style={styles.label}>{rowData.art}</Text>
+      </TouchableOpacity>
     )
+  }
+
+  selected(emoji) {
+    Clipboard.setString(emoji)
+    this.setState({selectedEmoji: emoji})
   }
 
   /* ***********************************************************
@@ -106,25 +90,31 @@ class EmojisListScreen extends Component {
     return this.state.dataSource.getRowCount() === 0
   }
 
-  renderHeader (data, sectionID) {
-    switch (sectionID) {
-      case 'first':
-        return <View style={styles.sectionHeader}><Text style={styles.boldLabel}>First Section</Text></View>
-      default:
-        return <View style={styles.sectionHeader}><Text style={styles.boldLabel}>Second Section</Text></View>
-    }
+  renderSectionHeader (sectionData, sectionID) {
+    return (
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionText}>{sectionID}</Text>
+      </View>
+      )
   }
 
   render () {
     return (
       <View style={styles.container}>
         <ListView
-          renderSectionHeader={this.renderHeader}
+          renderSectionHeader={this.renderSectionHeader}
           contentContainerStyle={styles.listContent}
           dataSource={this.state.dataSource}
           onLayout={this.onLayout}
           renderRow={this.renderRow}
           enableEmptySections
+        />
+        <TextInput 
+          style={styles.emojiDemoText}
+          value={this.state.selectedEmoji}
+          editable={false}
+          underlineColorAndroid='transparent'
+          ref={(input) => { this.textInput = input }}
         />
       </View>
     )
