@@ -1,12 +1,15 @@
 #  ASCIImoji
+
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
+
 React Native iOS + Android App providing 150+ ASCII Emojis for copy&amp;pasting
 
 ## Screenshots
-<div style="margin: auto; width: 50%">
-<img src="screenshot.png" alt="ASCIImoji Screenshot" width="200" height="400">
-<img src="screenshot2.png" alt="ASCIImoji Screenshot" width="200" height="400">
+
+<div style="text-align:center" align="middle">
+  <img src="screenshot.png" alt="ASCIImoji Screenshot" width="200" height="400" align="middle"/>
+  <img src="screenshot2.png" alt="ASCIImoji Screenshot" width="200" height="400" align="middle"/>
 </div>
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
 
 ## :arrow_up: How to Setup
 
